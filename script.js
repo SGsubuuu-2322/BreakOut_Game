@@ -5,8 +5,8 @@ const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext("2d");
 
 let score = 0;
-const brickRowCount = 9;
-const brickColumnCount = 5;
+const brickRowCount = 5;
+const brickColumnCount = 9;
 
 const ball = {
   x: canvas.width / 2,
@@ -37,9 +37,9 @@ const brickInfo = {
 
 const bricks = [];
 
-for (let i = 0; i < brickRowCount; i++) {
+for (let i = 0; i < brickColumnCount; i++) {
   bricks[i] = [];
-  for (let j = 0; j < brickColumnCount; j++) {
+  for (let j = 0; j < brickRowCount; j++) {
     const x = i * (brickInfo.w + brickInfo.padding) + brickInfo.offsetX;
     const y = j * (brickInfo.h + brickInfo.padding) + brickInfo.offsetY;
 
@@ -68,8 +68,8 @@ function drawScore() {
 }
 
 function drawBricks() {
-  bricks.forEach((row) => {
-    row.forEach((brick) => {
+  bricks.forEach((column) => {
+    column.forEach((brick) => {
       ctx.beginPath();
       ctx.rect(brick.x, brick.y, brick.w, brick.h);
       ctx.fillStyle = brick.visible ? "#0095dd" : "transparent";
@@ -79,14 +79,54 @@ function drawBricks() {
   });
 }
 
+function movePaddle() {
+  paddle.x += paddle.dx;
+
+  if (paddle.x + paddle.w > canvas.width) {
+    paddle.x = canvas.width - paddle.w;
+  } else if (paddle.x < 0) {
+    paddle.x = 0;
+  }
+}
+
 function draw() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
   drawBall();
   drawpaddle();
   drawScore();
   drawBricks();
 }
 
-draw();
+function update() {
+  movePaddle();
+
+  draw();
+  requestAnimationFrame(update);
+}
+
+update();
+
+function keyDown(e) {
+  if (e.key === "Right" || e.key === "ArrowRight") {
+    paddle.dx = paddle.speed;
+  } else if (e.key === "Left" || e.key === "ArrowLeft") {
+    paddle.dx = -paddle.speed;
+  }
+}
+
+function keyUp(e) {
+  if (
+    e.key === "Right" ||
+    e.key === "ArrowRight" ||
+    e.key === "Left" ||
+    e.key === "ArrowLeft"
+  ) {
+    paddle.dx = 0;
+  }
+}
+
+document.addEventListener("keydown", keyDown);
+document.addEventListener("keyup", keyUp);
 
 rulesBtn.addEventListener("click", () => {
   rules.classList.add("show");
