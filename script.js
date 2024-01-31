@@ -127,7 +127,7 @@ function moveBall() {
   });
 
   if (ball.y + ball.size > canvas.height) {
-    showBricks();
+    showAllBricks();
     score = 0;
   }
 }
@@ -136,11 +136,24 @@ function increaseScore() {
   score++;
 
   if (score % (brickRowCount * brickColumnCount) === 0) {
-    showBricks();
+    ball.visible = false;
+    paddle.visible = false;
+
+    //After 0.5 sec restart the game
+    setTimeout(function () {
+      showAllBricks();
+      score = 0;
+      paddle.x = canvas.width / 2 - 40;
+      paddle.y = canvas.height - 20;
+      ball.x = canvas.width / 2;
+      ball.y = canvas.height / 2;
+      ball.visible = true;
+      paddle.visible = true;
+    }, delay);
   }
 }
 
-function showBricks() {
+function showAllBricks() {
   bricks.forEach((column) => {
     column.forEach((brick) => (brick.visible = true));
   });
