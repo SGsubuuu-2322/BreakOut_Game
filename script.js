@@ -119,9 +119,25 @@ function moveBall() {
         ) {
           ball.dy *= -1;
           brick.visible = false;
+
+          increaseScore();
         }
       }
     });
+  });
+}
+
+function increaseScore() {
+  score++;
+
+  if (score % (brickColumnCount * brickColumnCount) === 0) {
+    showBricks();
+  }
+}
+
+function showBricks() {
+  bricks.forEach((column) => {
+    column.forEach((brick) => (brick.visible = true));
   });
 }
 
