@@ -12,9 +12,9 @@ const ball = {
   x: canvas.width / 2,
   y: canvas.height / 2,
   size: 10,
-  speed: 4,
-  dx: 4,
-  dy: -4,
+  speed: 2,
+  dx: 2,
+  dy: -2,
 };
 
 const paddle = {
@@ -79,6 +79,16 @@ function drawBricks() {
   });
 }
 
+function movePaddle() {
+  paddle.x += paddle.dx;
+
+  if (paddle.x + paddle.w > canvas.width) {
+    paddle.x = canvas.width - paddle.w;
+  } else if (paddle.x < 0) {
+    paddle.x = 0;
+  }
+}
+
 function moveBall() {
   ball.x += ball.dx;
   ball.y += ball.dy;
@@ -89,16 +99,30 @@ function moveBall() {
   if (ball.y + ball.size > canvas.height || ball.y - ball.size < 0) {
     ball.dy *= -1;
   }
-}
 
-function movePaddle() {
-  paddle.x += paddle.dx;
-
-  if (paddle.x + paddle.w > canvas.width) {
-    paddle.x = canvas.width - paddle.w;
-  } else if (paddle.x < 0) {
-    paddle.x = 0;
+  if (
+    ball.x - ball.size > paddle.x &&
+    ball.x + ball.size < paddle.x + paddle.w &&
+    ball.y + ball.size > paddle.y
+  ) {
+    ball.dy = -ball.speed;
   }
+
+  bricks.forEach((column) => {
+    column.forEach((brick) => {
+      if (brick.visible) {
+        if (
+          ball.x - ball.size > brick.x && // left brick side check
+          ball.x + ball.size < brick.x + brick.w && // right brick side check
+          ball.y + ball.size > brick.y && // top brick side check
+          ball.y - ball.size < brick.y + brick.h // bottom brick side check
+        ) {
+          ball.dy *= -1;
+          brick.visible = false;
+        }
+      }
+    });
+  });
 }
 
 function draw() {
