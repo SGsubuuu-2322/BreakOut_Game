@@ -4,13 +4,9 @@ const closeBtn = document.getElementById("close-btn");
 const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext("2d");
 
-rulesBtn.addEventListener("click", () => {
-  rules.classList.add("show");
-});
-
-closeBtn.addEventListener("click", () => {
-  rules.classList.remove("show");
-});
+let score = 0;
+const brickRowCount = 9;
+const brickColumnCount = 5;
 
 const ball = {
   x: canvas.width / 2,
@@ -25,10 +21,31 @@ const paddle = {
   x: canvas.width / 2 - 40,
   y: canvas.height - 10,
   w: 80,
-  h: 20,
+  h: 10,
   speed: 8,
   dx: 0,
 };
+
+const brickInfo = {
+  w: 70,
+  h: 20,
+  padding: 10,
+  offsetX: 45,
+  offsetY: 60,
+  visible: true,
+};
+
+const bricks = [];
+
+for (let i = 0; i < brickRowCount; i++) {
+  bricks[i] = [];
+  for (let j = 0; j < brickColumnCount; j++) {
+    const x = i * (brickInfo.w + brickInfo.padding) + brickInfo.offsetX;
+    const y = j * (brickInfo.h + brickInfo.padding) + brickInfo.offsetY;
+
+    bricks[i][j] = { x, y, ...brickInfo };
+  }
+}
 
 function drawBall() {
   ctx.beginPath();
@@ -45,5 +62,36 @@ function drawpaddle() {
   ctx.closePath();
 }
 
-drawBall();
-drawpaddle();
+function drawScore() {
+  ctx.font = "20px Arial";
+  ctx.fillText(`Score: ${score}`, canvas.width - 100, 30);
+}
+
+function drawBricks() {
+  bricks.forEach((row) => {
+    row.forEach((brick) => {
+      ctx.beginPath();
+      ctx.rect(brick.x, brick.y, brick.w, brick.h);
+      ctx.fillStyle = brick.visible ? "#0095dd" : "transparent";
+      ctx.fill();
+      ctx.closePath();
+    });
+  });
+}
+
+function draw() {
+  drawBall();
+  drawpaddle();
+  drawScore();
+  drawBricks();
+}
+
+draw();
+
+rulesBtn.addEventListener("click", () => {
+  rules.classList.add("show");
+});
+
+closeBtn.addEventListener("click", () => {
+  rules.classList.remove("show");
+});
