@@ -125,12 +125,17 @@ function moveBall() {
       }
     });
   });
+
+  if (ball.y + ball.size > canvas.height) {
+    showBricks();
+    score = 0;
+  }
 }
 
 function increaseScore() {
   score++;
 
-  if (score % (brickColumnCount * brickColumnCount) === 0) {
+  if (score % (brickRowCount * brickColumnCount) === 0) {
     showBricks();
   }
 }
